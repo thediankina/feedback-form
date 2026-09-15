@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Форма обратной связи</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/main.js" defer></script>
+</head>
+<body>
+<div class="feedback-container">
+    <h2>Обратная связь</h2>
+    <form action="/handler.php" method="post" class="feedback-form" id="feedbackForm" novalidate>
+        <input type="hidden" name="action" value="message" />
+
+        <div class="form-group">
+            <label for="theme">Тема обращения</label>
+            <select id="theme" name="theme" required>
+                <option value="" disabled selected>Выберите тему</option>
+                <option value="question">Вопрос</option>
+                <option value="complaint">Жалоба</option>
+                <option value="suggestion">Предложение</option>
+                <option value="other">Другое</option>
+            </select>
+            <span class="error-msg" data-for="theme"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="full-name">ФИО</label>
+            <input type="text" id="full-name" name="fullName"
+                   placeholder="Иванов Иван Иванович" required />
+            <span class="error-msg" data-for="fullName"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Телефон</label>
+            <input type="tel" id="phone" name="phone"
+                   placeholder="+7 (999) 000-00-00" required />
+            <span class="error-msg" data-for="phone"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email"
+                   placeholder="example@example.com" required />
+            <span class="error-msg" data-for="email"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="message">Сообщение</label>
+            <textarea id="message" name="message" rows="5"
+                      placeholder="Введите текст..." required></textarea>
+            <span class="error-msg" data-for="message"></span>
+            <span class="char-counter" id="messageCounter">0 / 4096</span>
+        </div>
+
+        <div class="form-group captcha-block">
+            <label for="captcha-answer">Решите пример</label>
+            <div class="captcha-wrapper">
+                <span class="captcha-question" id="captchaQuestion">Загрузка...</span>
+                <input type="text" id="captcha-answer" name="captchaAnswer"
+                       inputmode="numeric" autocomplete="off"
+                       placeholder="Ответ" required />
+                <button type="button" class="captcha-refresh" id="captchaRefresh"
+                        title="Обновить пример" aria-label="Обновить пример">&#x21bb;</button>
+            </div>
+            <span class="error-msg" data-for="captchaAnswer"></span>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="agreement" name="agreement" required />
+                Я даю согласие на обработку персональных данных
+            </label>
+            <span class="error-msg" data-for="agreement"></span>
+        </div>
+
+        <button type="submit" class="submit-btn">Отправить</button>
+    </form>
+</div>
+</body>
+</html>
