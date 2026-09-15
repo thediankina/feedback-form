@@ -15,7 +15,8 @@ class EmailValidator extends TextValidator
         $isValid = parent::validate($value);
         if (!$isValid) return false;
 
-        if (!preg_match($this->pattern, $value)) {
+        if (!filter_var($value, FILTER_VALIDATE_EMAIL) ||
+            !preg_match($this->pattern, $value)) {
             $this->errors[] = 'Некорректный e-mail';
             return false;
         }

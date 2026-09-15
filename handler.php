@@ -5,7 +5,6 @@ header('Content-Type: application/json; charset=utf-8');
 
 define('TEXT_MAX', 255);
 define('AREA_MAX', 4096);
-define('TO_EMAIL', 'thediankina@yandex.ru');
 
 define('ALLOWED_THEMES', ['question', 'complaint', 'suggestion', 'other']);
 define('PHONE_RE', '/^(\+7|8)\D*\d{3}\D*\d{3}\D*\d{2}\D*\d{2}$/');
@@ -131,10 +130,9 @@ if ($action === 'message') {
     . "Сообщение:\n$message\n";
 
     $headers = "From: noreply@localhost\r\n"
-    . "Reply-To: $email\r\n"
     . "Content-Type: text/plain; charset=utf-8\r\n";
 
-    $isSent = @mail(TO_EMAIL, $subject, $body, $headers);
+    $isSent = @mail($email, $subject, $body, $headers);
 
     if ($isSent) {
         echo json_encode([
