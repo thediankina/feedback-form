@@ -75,7 +75,7 @@ if ($action === 'message') {
         $errors['theme'] = $validator->getErrorsAsString();
     }
 
-    $validator = new FullNameValidator();
+    $validator = new TextValidator(TEXT_MAX);
 
     if (!$validator->validate($fullName)) {
         $errors['fullName'] = $validator->getErrorsAsString();
