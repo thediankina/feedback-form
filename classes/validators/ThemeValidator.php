@@ -1,5 +1,7 @@
 <?php
 
+namespace app\validators;
+
 class ThemeValidator extends Validator
 {
     private array $allowed = [];

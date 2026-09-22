@@ -12,59 +12,38 @@ define('EMAIL_RE', '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/');
 
 require_once __DIR__ . '/classes/autoload.php';
 
-function cleanInput(string $value): string
-{
-    return htmlspecialchars(trim($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-}
+use app\Request;
+use app\Captcha;
+use app\helpers\HtmlHelper;
+use app\validators\EmailValidator;
+use app\validators\PhoneValidator;
+use app\validators\TextValidator;
+use app\validators\ThemeValidator;
 
-function generateCaptcha(): array
-{
-    $a = random_int(1, 9);
-    $b = random_int(1, 9);
-    $ops = ['+', '-', '×'];
-    $op = $ops[array_rand($ops)];
+$request = new Request();
+$captcha = new Captcha();
 
-    if ($op === '+') {
-        $answer = $a + $b;
-    } elseif ($op === '-') {
-        if ($a < $b) {
-            $tmp = $a;
-            $a = $b;
-            $b = $tmp;
-        }
-        $answer = $a - $b;
-    } else {
-        $answer = $a * $b;
-    }
-
-    $_SESSION['captchaAnswer'] = $answer;
-
-    return [
-        'question' => "$a $op $b ="
-    ];
-}
-
-$action = $_POST['action'] ?? $_GET['action'] ?? '';
+$action = $request->isGet() ? $request->get('action') : $request->post('action');
 
 if ($action === 'captcha') {
-    $newCaptcha = generateCaptcha();
+    $question = $captcha->generate();
 
     echo json_encode([
-        'question' => $newCaptcha['question']
+        'question' => $question
     ]);
     exit();
 }
 
 if ($action === 'message') {
-    $theme = cleanInput($_POST['theme'] ?? '');
-    $fullName = cleanInput($_POST['fullName'] ?? '');
-    $phone = cleanInput($_POST['phone'] ?? '');
-    $email = cleanInput($_POST['email'] ?? '');
-    $message = cleanInput($_POST['message'] ?? '');
-    $agreement = isset($_POST['agreement']) && $_POST['agreement'] === 'on';
+    $theme = HtmlHelper::sanitize($request->post('theme'));
+    $fullName = HtmlHelper::sanitize($request->post('fullName'));
+    $phone = HtmlHelper::sanitize($request->post('phone'));
+    $email = HtmlHelper::sanitize($request->post('email'));
+    $message = HtmlHelper::sanitize($request->post('message'));
+    $agreement = $request->post('agreement') === 'on';
 
-    $captchaAnswer = cleanInput($_POST['captchaAnswer'] ?? '');
-    $storedAnswer = $_SESSION['captchaAnswer'] ?? null;
+    $captchaAnswer = HtmlHelper::sanitize($request->post('captchaAnswer'));
+    $storedAnswer = $captcha->getAnswer();
 
     $errors = [];
 
@@ -109,7 +88,7 @@ if ($action === 'message') {
         $errors['agreement'] = 'Необходимо согласие на обработку данных';
     }
 
-    $newCaptcha = generateCaptcha();
+    $question = $captcha->generate();
 
     if (!empty($errors)) {
         http_response_code(400);
@@ -117,7 +96,7 @@ if ($action === 'message') {
             'success'      => false,
             'message'      => 'Проверьте правильность заполнения полей',
             'errors'       => $errors,
-            'captcha'      => $newCaptcha['question']
+            'captcha'      => $question
         ]);
         exit();
     }
@@ -139,14 +118,14 @@ if ($action === 'message') {
         echo json_encode([
             'success' => true,
             'message' => 'Ваше обращение успешно отправлено! Мы свяжемся с вами в ближайшее время.',
-            'captcha' => $newCaptcha['question']
+            'captcha' => $question
         ]);
     } else {
         http_response_code(502);
         echo json_encode([
             'success' => false,
             'message' => 'Ошибка при отправке письма. Попробуйте позже или свяжитесь с нами другим способом.',
-            'captcha' => $newCaptcha['question']
+            'captcha' => $question
         ]);
     }
     exit();

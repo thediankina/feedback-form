@@ -1,5 +1,7 @@
 <?php
 
+namespace app\validators;
+
 class PhoneValidator extends Validator
 {
     public string $invalidFormatErrorMessage = 'Неверный формат номера телефона';

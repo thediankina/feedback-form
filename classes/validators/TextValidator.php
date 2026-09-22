@@ -1,5 +1,7 @@
 <?php
 
+namespace app\validators;
+
 class TextValidator extends Validator
 {
     protected int $maxLength;

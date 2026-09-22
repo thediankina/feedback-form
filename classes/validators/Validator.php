@@ -1,5 +1,7 @@
 <?php
 
+namespace app\validators;
+
 abstract class Validator
 {
     protected array $errors = [];

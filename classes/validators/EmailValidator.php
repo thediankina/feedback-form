@@ -1,5 +1,7 @@
 <?php
 
+namespace app\validators;
+
 class EmailValidator extends TextValidator
 {
     private string $pattern;
