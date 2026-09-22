@@ -112,6 +112,7 @@ if ($action === 'message') {
     $newCaptcha = generateCaptcha();
 
     if (!empty($errors)) {
+        http_response_code(400);
         echo json_encode([
             'success'      => false,
             'message'      => 'Проверьте правильность заполнения полей',
@@ -141,6 +142,7 @@ if ($action === 'message') {
             'captcha' => $newCaptcha['question']
         ]);
     } else {
+        http_response_code(502);
         echo json_encode([
             'success' => false,
             'message' => 'Ошибка при отправке письма. Попробуйте позже или свяжитесь с нами другим способом.',
